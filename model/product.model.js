@@ -5,7 +5,7 @@ const ProductSchema = new Schema({
     name: String,
     price: String,
     image: String,
-    isActive: Boolean,
+    isActive: {type:Boolean, default: true},
     categories: {
         type: Schema.Types.ObjectId,
         ref: 'Category'
@@ -13,3 +13,4 @@ const ProductSchema = new Schema({
 })
 
 module.exports = ProductSchema;
+

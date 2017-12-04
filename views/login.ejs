@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ejs</title>
+
+</head>
+<body>
+    <form action="/signup" method="POST">
+        <input type="text" name="firstName" id="firstName" placeholder="First Name">
+        <input type="text" name="lastName" id="lastName" placeholder="Last Name">
+        <input type="username" name="username" id="username" placeholder="username">
+        <input type="password" name="password" id="password" placeholder="Password">
+        <input type="passwordConfirm" name="passwordConfirm" id="passwordConfirm" placeholder="Password Confirm">
+        <input type="city" name="city" id="city" placeholder="City">
+        <input type="address" name="address" id="address" placeholder="Address">
+        <button type="submit">Sing Up</button>
+    </form><br>
+    <form action="/login" method="POST">
+        <input type="username" name="username" id="username" placeholder="username">
+        <input type="password" name="password" id="password" placeholder="Password">
+        <button type="submit">Log In</button>
+        <br>
+        <%if (error){%>
+            <div class="alert alert-danger"><%=error%></div>
+        <%}%>
+        <br>
+    </form>
+</body>
+</html>
+
+
