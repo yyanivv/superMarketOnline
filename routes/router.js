@@ -2,25 +2,34 @@ const express = require('express');
 const app = express();
 const appRouter = express.Router();
 const db = require('../dal/db.js');
+const cartMiddleware = require('../dal/cart.middlewares.js');
+const handlers = require('../dal/handlers.js');
 
+appRouter.put('/createOrder', db.createOrder, handlers.putAndPatchResponseMiddleware)
 
-/*----------------------------------------------------------------
------------------------>  OLD ROUTERS  <--------------------------
-appRouter.get('/getMembers', db.getMembers, (req,res)=> {
-    res.json({success:true, data: req.data});
-})
+appRouter.put('/createCategory', db.createCategory, handlers.putAndPatchResponseMiddleware)
 
-appRouter.put('/newTask', db.newTask, (req,res)=> {
-    res.sendStatus(204);
-})
+appRouter.put('/createProduct', db.createProduct, handlers.putAndPatchResponseMiddleware)
 
-appRouter.get('/getTasks', db.getTasks, (req,res)=> {
-    res.json({success:true, data: req.data});
-})
-appRouter.delete('/deleteTask/:id', db.deleteTask, (req,res)=> {
-    res.sendStatus(204);
-})
+appRouter.patch('/editProduct', db.editProduct, handlers.putAndPatchResponseMiddleware)
 
-----------------------------------------------------------------*/
+appRouter.get('/getAllProducts', db.getAllProducts, handlers.getResponseMiddleware)
+
+appRouter.get('/getProductByName/:pname', db.getProductByName, handlers.getResponseMiddleware)
+
+appRouter.get('/getProductsByCategory/:cid', db.getProductsByCategory, handlers.getResponseMiddleware)
+
+appRouter.get('/getAllCategories', db.getAllCategories, handlers.getResponseMiddleware)
+
+appRouter.get('/getDeliveryDates', db.getDeliveryDates, handlers.getResponseMiddleware)
+
+appRouter.get('/getOrdersByUser/:uid', db.getOrdersByUser, handlers.getResponseMiddleware)
+
+appRouter.patch('/updateCart', cartMiddleware.updateCart, cartMiddleware.totalPrice, handlers.putAndPatchResponseMiddleware)
+
+appRouter.delete('/deleteProduct/:pid', cartMiddleware.deleteProduct,cartMiddleware.totalPrice, handlers.putAndPatchResponseMiddleware)
+
+appRouter.delete('/clearCart', cartMiddleware.clearCart, handlers.deleteResponseMiddleware)
+
 
 module.exports = appRouter;

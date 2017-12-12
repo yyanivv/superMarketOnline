@@ -2,19 +2,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const OrderSchema = new Schema({
-    createdOn: {type:Date, default: new Date().toLocaleDateString()},
+    createdOn: {type:Date, default: new Date()},
     cart: {
         products: [{
             products:  {type: Schema.Types.ObjectId, ref: 'Product'},
-            quantity: String,
-            total: String 
+            quantity: Number,
+            total: Number 
         }],
-        createdOn: Date
+        createdOn: Date,
+        price: Number,
     },
-    price: String,
     payment_details: Object,
-    shipping_details: {city:String,address:String,date:String}
+    shipping_details: {city:String,address:String}, //date:{type:Date, default: new Date()
+    shipping_date: String
 });
 
 module.exports = OrderSchema;
- 
+
+

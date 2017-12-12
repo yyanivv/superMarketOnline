@@ -10,7 +10,10 @@ const UserSchema = new Schema({
     city: String,
     address: String,
     isActive: {type:Boolean, default: true},
-    orders: [{type: Schema.Types.ObjectId, ref: 'Order'}]
+    orders: [{type: Schema.Types.ObjectId, ref: 'Order'}],
+    accessToken: String,
+    refreshToken: String,
+    profile: Object
 })
 
 module.exports = UserSchema;
