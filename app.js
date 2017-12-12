@@ -21,14 +21,14 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 passport.use(new GoogleStrategy({
-      clientID: '231738315732-uepce3u2qorpggl70qgmpdpod0k2c3eu.apps.googleusercontent.com',
-      clientSecret: 'PN42u70tIuHrwvUhMxAScdlZ',
+      clientID: conf.googleClientID,
+      clientSecret: conf.googleClientSecret,
       callbackURL: "/auth/google/callback"
     }, (accessToken, refreshToken, profile, done) => passportConfig.socialUserExist(accessToken, refreshToken, profile, done)));
 
 passport.use(new FacebookStrategy({
-    clientID: '1740278442649648',
-    clientSecret: '3b723c43175930c53316ee155ba1e036',
+    clientID: conf.facebookClientID,
+    clientSecret: conf.facebookClientSecret,
     callbackURL: "http://localhost:3004/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'photos']
     }, (accessToken, refreshToken, profile, done) => passportConfig.socialUserExist(accessToken, refreshToken, profile, done)));
