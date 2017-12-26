@@ -13,7 +13,7 @@
 
 * At the time of purchase, no order will be made for a given day, for which three orders have already been made.
 
-* After the order, the shopping cart stored on the SESSION will be saved in the DB under the orders and will be associated with the user connected to the site.
+* After order was submitted, the shopping cart (which is stored on session) will be saved in the DB under the orders and will be associated with the logged in user.
 
 * A user will be able to view his previous orders.
 
