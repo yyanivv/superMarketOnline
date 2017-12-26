@@ -3,19 +3,9 @@ const userSchema = require('../model/user.model.js');
 const User = mongoose.model('User', userSchema);
 const crypto = require('crypto');
 
+
 const passportHandlers = {
-    userExist: (req, res, next) => {
-        User.findOne({username: req.body.username}, (err, user) => {
-            if (err) {
-                console.log(err);
-            }
-            if (user) {
-                return res.redirect('login?userExist')
-            }
-            return next();
-        })
-    },
-    
+
     socialUserExist: (accessToken, refreshToken, profile, done) => {
         User.findOne({"profile.id": profile.id}, (err, user) => {
             if (err) {
@@ -46,6 +36,7 @@ const passportHandlers = {
             return done(null, user);
         })
     },
+    
     login: (username, password, done) => {
         const hash = passportHandlers.generateHash(username, password);
         User.findOne({username}, (err, user) => {
@@ -53,7 +44,6 @@ const passportHandlers = {
             return done(err);
           }
           if (!user) {
-              console.log('1')
             return done(null, false, {message: 'User not found'});
           }
           if (user.password !== hash) {

@@ -10,7 +10,7 @@ const getLastCart = (req, res, next) => {
     const orders = req.session.passport.user.orders;
     if(orders) {
         const lastOrderId = orders[orders.length-1];
-        Order.findOne({_id: lastOrderId}).exec((err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
+        return Order.findOne({_id: lastOrderId}).exec((err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
     }
     return next()
 }
@@ -24,7 +24,7 @@ const updateCart = (req, res, next) => {
     req.body.total = req.body.quantity * req.body.products.price;
     for(let i=0; i<productsAraay.length; i++){
         if(product.products._id === productsAraay[i].products._id){
-            productsAraay[i].quantity += product.quantity
+            productsAraay[i].quantity === 0 ? productsAraay.splice(i,1) : productsAraay[i].quantity += product.quantity
             productsAraay[i].total += product.total
             return next();
         }   
@@ -46,8 +46,8 @@ const totalPrice = (req,res,next) =>{
     const products = req.session.cart.products;
     let price = 0;
     products.forEach(product => price += product.total)
+    req.session.cart.price = price;
     req.data = req.session.cart;
-    req.data.price = price;
     return next();
 }
 

@@ -11,14 +11,22 @@ const handlers = require('./handlers.js');
 
 const queries = {
     
+    userExist: (req, res, next) => {
+        const username = req.params.username;
+        User.findOne({username}, (err, data) => handlers.errorHandler(err, res, () => {
+            data = data ? true : false 
+            handlers.successHandler(req, data, next)
+        }));
+    },
+    
     createOrder: (req,res,next) => {
         const order = new Order(req.body);
         order.save((err, data)=> handlers.errorHandler(err, res, () => queries.appendOrderToUser(req,res,data,next)))
     },
     
     appendOrderToUser: (req,res, data, next) => {
-        //const _id = req.session.passport.user._id
-        User.update({_id:"5a25ae308528893da07c8b80"}, {$push: {"orders": data}}, {safe: true, upsert: true}, (err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
+        const uid = req.session.passport.user._id
+        User.update({_id:uid}, {$push: {"orders": data}}, {safe: true, upsert: true}, (err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
     },
 
     createCategory: (req, res, next) => {
@@ -66,34 +74,10 @@ const queries = {
     getOrdersByUser: (req, res, next) => {
         const uid = req.params.uid
         User.find({_id: uid}).populate('orders').exec((err, data)=> handlers.errorHandler(err, res, () => handlers.successHandler(req, data[0].orders, next)));
-    },
-    
-    
-    
+    }
     
 }
 
 module.exports = queries;
-
-
-/*const queries = {
-    createOrder: (req, res, next) => {
-        const order = new Order(req.body);
-        order.save((err, data)=> handlers.errorHandler(err, res, () =>{
-            User.update({_id:'5a25ae308528893da07c8b80'}, {$push: {"orders": data}}, {safe: true, upsert: true}, (err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
-        }))
-    }
-    createOrder: (req,res,next) => {
-        const order = new Order(req.body);
-        order.save((err, data)=> errorHandler(err, res, () =>queries.addOrderToUser(req,res,data,next)))
-    },
-    
-    appendOrderToUser: (req,res, data, next) => {
-        const _id = req.session.passport.user._id
-        User.update({_id}, {$push: {"orders": data}}, {safe: true, upsert: true}, (err, data) => errorHandler(err, res, () => successHandler(req, data, next)));
-    }
-    
-}*/
-
 
 

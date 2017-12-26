@@ -1,0 +1,52 @@
+<div class="form-container" ng-controller="loginController">
+    <h3>SIGN UP NOW!</h3>
+    <form action="/signup" method="post" name="form2" novalidate>
+        <div ng-hide="regStep">
+            <div class="form-group">
+                <input type="email" class="form-control" placeholder="Email" name="username" required ng-model="user" ng-change="checkUser()">
+                <p ng-show="form2.user.$dirty && form2.user.$invalid">Please type a valid email</p>
+                <p ng-show="userExist">This user is already exist.</p>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Password" name="password" required ng-model="pass" ng-keyup="clearErrors()">
+                <p ng-show="register.passwordConfirm.$dirty && register.passwordConfirm.$invalid">Please match the Passwords</p>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Confirm password" name="passwordConfirm" ng-model="passwordConfirm" ng-keyup="clearErrors()" required validate-equals="pass">
+                <p ng-show="form2.passwordConfirm.$dirty && form2.passwordConfirm.$invalid">Please match the Passwords</p>
+            </div>
+            <button ng-click="toggleSteps()" ng-disabled="form2.user.$invalid || form2.password.$invalid || form2.passwordConfirm.$invalid ||    userExist" class="btn btn-info" type="button">next</button>
+        </div>
+
+        <div ng-show="regStep">
+            <div class="form-group">
+                <select name="city" ng-model="city">
+            <option value="" disabled selected>Select City</option>           
+            <option value="Tel Aviv">Tel Aviv</option>           
+            <option value="Haifa">Haifa</option>           
+            <option value="Jerusalem">Jerusalem</option>           
+            <option value="Ramat Gan">Ramat Gan</option>           
+            <option value="Be'er Sheva">Be'er Sheva</option>           
+            <option value="Hertzelia">Hertzelia</option>           
+            <option value="Qiryat Ono">Qiryat Ono</option>           
+            <option value="Petah Tikva">Petah Tikva</option>           
+            <option value="Kfar Saba">Kfar Saba</option>           
+            <option value="Natanya">Natanya</option>           
+        </select>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Address" name="address" ng-model="address">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="first name" name="firstName" ng-model="firstName" required>
+                <p ng-show="form2.firstName.$dirty && form2.firstName.$invalid">You must type your first name</p>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="last name" name="lastName" ng-model="lastName" required>
+                <p ng-show="form2.lastName.$dirty && form2.lastName.$invalid">You must type your last name</p>
+            </div>
+            <button ng-click="toggleSteps()" class="btn btn-info" type="button">back</button>
+            <button type="submit" class="btn btn-info pull-right" ng-disabled="form2.lastName.$invalid || form2.firstName.$invalid">Register</button>
+        </div>
+    </form>
+</div>

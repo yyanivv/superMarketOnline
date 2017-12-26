@@ -13,7 +13,7 @@ const OrderSchema = new Schema({
         price: Number,
     },
     payment_details: Object,
-    shipping_details: {city:String,address:String}, //date:{type:Date, default: new Date()
+    shipping_details: {city:String,address:String},
     shipping_date: String
 });
 

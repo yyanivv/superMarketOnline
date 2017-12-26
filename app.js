@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const async = require('async');
 const appRouters = require('./routes/router.js');
 const authRouter = require('./routes/authRouter.js');
-const middlewares = require('./dal/db.js');
 const conf = require('./configuration/dev-conf.js');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -13,7 +12,9 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const passportConfig = require('./auth/passport-conf');
+const db = require('./dal/db.js');
 const ejs = require('ejs');
+const engine  = require ('ejs-locals');
 const flash = require('connect-flash');
 const userSchema = require('./model/user.model.js');
 const User = mongoose.model('User', userSchema);
@@ -43,6 +44,8 @@ passport.serializeUser(passportConfig.serializeUser);
 
 passport.deserializeUser(passportConfig.deserializeUser);
 
+app.engine('ejs', engine);
+
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: false}))
@@ -70,50 +73,56 @@ app.use(passport.initialize());
 
 app.use(passport.session());
 
-//app.use(express.static('public'));
+app.use(express.static('public'));
+
 app.get('/login', (req, res) => {
     res.render('login',{
         error: req.flash('error')
     })
 });
 
+app.get('/userExist/:username', db.userExist, (req, res)=> res.status(200).json({userExist: req.data}));
+
 app.use('/super', passportConfig.validatedUser, appRouters);
+
 app.use('/oauth', passportConfig.validatedUser, authRouter);
+
 app.get('/auth/facebook', passport.authenticate('facebook'));
+
 app.get('/auth/google',
     passport.authenticate('google', {scope: ['email','profile']}))
 
 app.get('/auth/google/callback',
     passport.authenticate('google',{
         failureRedirect: '/login?login=false'
-        }), (req, res) => {
-            res.redirect('/login?login=true');
-    });
+        }), (req, res) => res.redirect('/login?login=true'));
 
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
-      successRedirect: '/login?success=true',
-      failureRedirect: '/login?success=false'
+      successRedirect: '/login?login=true',
+      failureRedirect: '/login?login=false'
 }));
 
 app.post('/login',
     passport.authenticate('local', {
-      successRedirect: '/login?success=true',
-      failureRedirect: '/login?success=false',
+      successRedirect: '/login?login=true',
+      failureRedirect: '/login?login=false',
       failureFlash : true
     })
 );
 
-app.post('/signup', passportConfig.userExist, 
+app.post('/signup', 
     passport.authenticate('local-sign', {
-      successRedirect: '/login?success=true',
-      failureRedirect: '/login?success=false'
+      successRedirect: '/login?signup=true',
+      failureRedirect: '/login?signup=false'
     })
 );
 
 app.get('/logout', (req, res) => {
   req.logout();
-  res.redirect('/login.html');
+  res.render('login',{
+        error: req.flash('error')
+    })
 });
 
 async.waterfall([
