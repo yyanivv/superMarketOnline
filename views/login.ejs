@@ -8,13 +8,13 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link rel="stylesheet" href="css/login.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/controllers/loginController.js"></script>
     <script type="text/javascript" src="js/directives/validateEquals.js"></script>
     <script type="text/javascript" src="js/services/services.js"></script>
-
 </head>
 
 <body ng-controller="loginController" ng-cloak>
@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
                 <img src="images/logo.png" alt="New Market" id="logo">
-                <a class="navbar-brand" href="login">Smart Shopping</a> 
+                <a class="navbar-brand" href="login">Smart Shopping</a>
                 <p>{{fullName}}</p>
                 <form action="/logout" method="get">
                     <button type="submit" class="btn btn-info" ng-show="userConnectedBtns">Logout</button>
@@ -30,34 +30,123 @@
             </div>
         </div>
     </nav>
-    <nav class="navbar navbar-inverse">
-        <ul class="nav navbar-nav">
-            <li><a href="#!/login">Login</a></li>
-            <li><a href="#!/signup">Signup</a></li>
-            <li><a href="#!/social">Social</a></li>
-        </ul>
-    </nav>
-    <div class="authenticateSection" ng-view>
 
+    <div class="authenticateSection">
+        <div class="panel form-container">
+            <ul class="nav nav-pills">
+                <li class="active topButton">
+                    <a data-toggle="tab" href="#login">Sign in</a>
+                </li>
+                <li class="topButton">
+                    <a data-toggle="tab" href="#register">Sign Up</a>
+                </li>
+            </ul>
+            <div class="tab-content clearfix">
+                <div id="login" class="tab-pane fade in active">
+                        <h3>LOG IN HERE!</h3>
+                        <form action="/login" method="POST" name="form" novalidate>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Username" name="username" required ng-model="username">
+                                <p ng-show="form.username.$dirty && form.username.$invalid">You must type your username</p>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Password" name="password" required ng-model="password">
+                                <p ng-show="form.password.$dirty && form.password.$invalid">You must type your password</p>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" ng-disabled="form.password.$invalid || form.username.$invalid" class="btn btn-info">Login</button>
+                                <p>
+                                    <%=error%>
+                                </p>
+                            </div>
+                        </form>
+
+                        <div class="social-buttons">
+                            <form action="/auth/facebook" method="get">
+                                <button type="submit" class="loginBtn loginBtn--facebook">
+                                  Login with Facebook
+                                </button>
+                            </form>
+                            <form action="/auth/google" method="get">
+                                <button type="submit" class="loginBtn loginBtn--google">
+                                  Login with Google
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                
+                <div id="register" class="tab-pane fade">
+                    <h3>SIGN UP NOW!</h3>
+                    <form action="/signup" method="post" name="form2" novalidate>
+                        <div ng-hide="regStep">
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="Email" name="username" required ng-model="user" ng-change="checkUser()">
+                                <p ng-show="form2.user.$dirty && form2.user.$invalid">Please type a valid email</p>
+                                <p ng-show="userExist">This user is already exist.</p>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Password" name="password" required ng-model="pass" ng-keyup="clearErrors()">
+                                <p ng-show="register.passwordConfirm.$dirty && register.passwordConfirm.$invalid">Please match the Passwords</p>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Confirm password" name="passwordConfirm" ng-model="passwordConfirm" ng-keyup="clearErrors()" required validate-equals="pass">
+                                <p ng-show="form2.passwordConfirm.$dirty && form2.passwordConfirm.$invalid">Please match the Passwords</p>
+                            </div>
+                            <button ng-click="toggleSteps()" ng-disabled="form2.user.$invalid || form2.password.$invalid || form2.passwordConfirm.$invalid ||    userExist" class="btn btn-info" type="button">next</button>
+                        </div>
+                        <div ng-show="regStep">
+                            <div class="form-group">
+                                <select name="city" ng-model="city">
+                        <option value="" disabled selected>Select City</option>           
+                        <option value="Tel Aviv">Tel Aviv</option>           
+                        <option value="Haifa">Haifa</option>           
+                        <option value="Jerusalem">Jerusalem</option>           
+                        <option value="Ramat Gan">Ramat Gan</option>           
+                        <option value="Be'er Sheva">Be'er Sheva</option>           
+                        <option value="Hertzelia">Hertzelia</option>           
+                        <option value="Qiryat Ono">Qiryat Ono</option>           
+                        <option value="Petah Tikva">Petah Tikva</option>           
+                        <option value="Kfar Saba">Kfar Saba</option>           
+                        <option value="Natanya">Natanya</option>           
+                    </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Address" name="address" ng-model="address">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="first name" name="firstName" ng-model="firstName" required>
+                                <p ng-show="form2.firstName.$dirty && form2.firstName.$invalid">You must type your first name</p>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="last name" name="lastName" ng-model="lastName" required>
+                                <p ng-show="form2.lastName.$dirty && form2.lastName.$invalid">You must type your last name</p>
+                            </div>
+                            <button ng-click="toggleSteps()" class="btn btn-info" type="button">back</button>
+                            <button type="submit" class="btn btn-info pull-right" ng-disabled="form2.lastName.$invalid || form2.firstName.$invalid">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-        <div class="startShopping">
-            <button class="btn btn-warning" ng-show="userConnectedBtns">{{shoppingStatus}}</button>
-        </div>
-        <div>
-            <p ng-if="openCart">
-                {{openCart.cart.price}} {{openCart}}
-            </p>
-            <p ng-if="lastOrder">
-                {{lastOrder.cart.price}}
-                <h1 ng-if="lastOrder">last order</h1>
-            </p>
-            <p ng-if="!openCart && !lastOrder">
-                no orders no cart
-            </p>
-        </div>
-        <button ng-click="addProduct(p1)">{{p1.products.name}}</button>
-        <button ng-click="addProduct(p2)">{{p2.products.name}}</button>
-        <button ng-click="addProduct(p3)">{{p3.products.name}}</button>
+    <div class="startShopping">
+        <button class="btn btn-warning" ng-show="userConnectedBtns">{{shoppingStatus}}</button>
+    </div>
+    <div>
+        <p ng-if="openCart">
+            {{openCart.cart.price}} {{openCart}}
+        </p>
+        <p ng-if="lastOrder">
+            {{lastOrder.cart.price}}
+            <h1 ng-if="lastOrder">last order</h1>
+        </p>
+        <p ng-if="!openCart && !lastOrder">
+            no orders no cart
+        </p>
+    </div>
+    <button ng-click="addProduct(p1)">{{p1.products.name}}</button>
+    <button ng-click="addProduct(p2)">{{p2.products.name}}</button>
+    <button ng-click="addProduct(p3)">{{p3.products.name}}</button>
 </body>
 
 </html>

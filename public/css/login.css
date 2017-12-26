@@ -86,9 +86,11 @@ body {
 /*    box-shadow: 0px 8px 32px 0px #8a6d3b73;*/
 /*    border-radius: 0px 0px 10px 10px;*/
 }
+
 .navbar {
     margin-bottom: 0px;
 }
+
 .navbar-brand {
     margin-top: 60px;
     font-size: 25px;
@@ -111,4 +113,8 @@ body {
 .form-container > h3 {
     text-align: center;
     color: #7b602f;
+}
+
+.social-buttons form {
+    display: inline-block;
 }

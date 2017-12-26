@@ -1,8 +1,5 @@
 app.controller('loginController', ($scope, $http, superServices) => {
-    
-//    $scope.openCart = false;
-//    $scope.lastOrder = false;
-    
+        
     const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
     
     const continueShopping = cart => {
@@ -23,7 +20,7 @@ app.controller('loginController', ($scope, $http, superServices) => {
         $scope.userConnectedBtns = true;
         $scope.shoppingStatus = data.openCart ? continueShopping(data.openCart) : startShopping(data) ;
     }
-        
+    /*   
     superServices.fetchUser().then(({data}) => $scope.authorizedUser(data));
 
     $scope.checkUser = () => superServices.userExist($scope.user).then(({data}) => $scope.userExist = data.userExist ? true : false);
@@ -81,5 +78,5 @@ app.controller('loginController', ($scope, $http, superServices) => {
 //	}
 //}
 //console.log(cart)
-//    superServices.createOrder(cart).then(({data})=>console.log(data))
+//    superServices.createOrder(cart).then(({data})=>console.log(data))*/
 })
