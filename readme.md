@@ -2,4 +2,3 @@
 ## Author: Yaniv Dadon ##
 ## New Market - How its work.. ##
 
-*
