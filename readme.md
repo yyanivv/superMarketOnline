@@ -7,7 +7,7 @@
 
 * Users can register by email or log in using social networks.
 
-* After connecting to the new market, the user will be shown an open shopping cart or last order if there is no shopping cart open, accordingly, the user will be shown a button with a continued shopping/start shopping.
+* After connecting to the new market, the user will see an open shopping cart or last order if there is no shopping cart open, accordingly, the user will be shown a button with a continued shopping/start shopping.
 
 * The user will be able to add products to the cart item by item/quantity of an item the user will also be able to remove products from the cart/empty the whole cart.
 
