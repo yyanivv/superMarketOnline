@@ -31,6 +31,8 @@ const ajaxCalls = ($http) => {
     const clearCart = cid => $http.delete('/super/clearCart/' + cid);
 
     const getDeliveryDates = () => $http.get('/super/getDeliveryDates');
+    
+    const uploadFile = formData => $http({url:'/upload',method: 'POST',data: formData, headers: {'Content-Type': undefined}});
 
     return { 
         /*getCities,*/
@@ -48,7 +50,8 @@ const ajaxCalls = ($http) => {
         getProductsByCategory,
         deleteProductFromCart,
         clearCart,
-        getDeliveryDates
+        getDeliveryDates,
+        uploadFile
     }
 }
 

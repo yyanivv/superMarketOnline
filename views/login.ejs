@@ -74,7 +74,6 @@
                             </form>
                         </div>
                     </div>
-                
                 <div id="register" class="tab-pane fade">
                     <h3>SIGN UP NOW!</h3>
                     <form action="/signup" method="post" name="form2" novalidate>
@@ -96,19 +95,19 @@
                         </div>
                         <div ng-show="regStep">
                             <div class="form-group">
-                                <select name="city" ng-model="city">
-                        <option value="" disabled selected>Select City</option>           
-                        <option value="Tel Aviv">Tel Aviv</option>           
-                        <option value="Haifa">Haifa</option>           
-                        <option value="Jerusalem">Jerusalem</option>           
-                        <option value="Ramat Gan">Ramat Gan</option>           
-                        <option value="Be'er Sheva">Be'er Sheva</option>           
-                        <option value="Hertzelia">Hertzelia</option>           
-                        <option value="Qiryat Ono">Qiryat Ono</option>           
-                        <option value="Petah Tikva">Petah Tikva</option>           
-                        <option value="Kfar Saba">Kfar Saba</option>           
-                        <option value="Natanya">Natanya</option>           
-                    </select>
+                                <select name="city" ng-model="city" class="form-control">
+                                    <option value="" disabled selected>Select City</option>           
+                                    <option value="Tel Aviv">Tel Aviv</option>           
+                                    <option value="Haifa">Haifa</option>           
+                                    <option value="Jerusalem">Jerusalem</option>           
+                                    <option value="Ramat Gan">Ramat Gan</option>           
+                                    <option value="Be'er Sheva">Be'er Sheva</option>           
+                                    <option value="Hertzelia">Hertzelia</option>           
+                                    <option value="Qiryat Ono">Qiryat Ono</option>           
+                                    <option value="Petah Tikva">Petah Tikva</option>           
+                                    <option value="Kfar Saba">Kfar Saba</option>           
+                                    <option value="Natanya">Natanya</option>           
+                                </select>
                             </div>
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Address" name="address" ng-model="address">
@@ -147,6 +146,8 @@
     <button ng-click="addProduct(p1)">{{p1.products.name}}</button>
     <button ng-click="addProduct(p2)">{{p2.products.name}}</button>
     <button ng-click="addProduct(p3)">{{p3.products.name}}</button>
+    <input type="file" id="myfile">
+    <button ng-click="uploadFile()">Upload File</button>
 </body>
 
 </html>

@@ -15,18 +15,43 @@ app.controller('loginController', ($scope, $http, superServices) => {
 		return 'start Shopping'
     }
     
+    const debounce = (func, wait, immediate) => {
+        let timeout;
+        return function() {
+            let context = this, args = arguments;
+            let later = () => {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            let callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    };
+    
     $scope.authorizedUser = data => {
 		$scope.fullName = data.user.profile ? data.user.profile.displayName : capitalizeFirstLetter(data.user.firstName) + ' ' + capitalizeFirstLetter(data.user.lastName);
         $scope.userConnectedBtns = true;
         $scope.shoppingStatus = data.openCart ? continueShopping(data.openCart) : startShopping(data) ;
     }
-    /*   
+      
     superServices.fetchUser().then(({data}) => $scope.authorizedUser(data));
-
-    $scope.checkUser = () => superServices.userExist($scope.user).then(({data}) => $scope.userExist = data.userExist ? true : false);
-
+        
+    $scope.checkUser = debounce(()=> {
+           superServices.userExist($scope.user).then(({data}) => $scope.userExist = data.userExist ? true : false);
+        },500);
+    
     $scope.toggleSteps = () => $scope.regStep = !$scope.regStep;
     
+    $scope.uploadFile = () => {
+        const file = document.getElementById('myfile');
+        const formData = new FormData();
+        formData.append('sampleFile', file.files[0]);
+        superServices.uploadFile(formData);
+    }
+    
+    /* 
     $scope.p1 = {
             products:  {
                 _id:"5a299085a18eb029547b42d4",

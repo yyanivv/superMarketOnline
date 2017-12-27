@@ -20,6 +20,9 @@ const userSchema = require('./model/user.model.js');
 const User = mongoose.model('User', userSchema);
 const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const fileUpload = require('express-fileupload');
+const fs = require('fs');
+const path = require('path');
 
 passport.use(new GoogleStrategy({
       clientID: conf.googleClientID,
@@ -53,6 +56,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json());
 
 app.use(cookieParser());
+
 app.use(session({
   secret: conf.secretKey,
   resave: false,
@@ -68,6 +72,8 @@ app.use(session({
 }));
 
 app.use(flash());
+
+app.use(fileUpload());
 
 app.use(passport.initialize());
 
@@ -123,6 +129,18 @@ app.get('/logout', (req, res) => {
   res.render('login',{
         error: req.flash('error')
     })
+});
+
+app.post('/upload', (req, res) => {
+    if (!req.files)
+        return res.status(400).send('No files were uploaded.');
+    const sampleFile = req.files.sampleFile;
+    fs.writeFile(path.join(__dirname, `/upload/`, sampleFile.name), sampleFile.data, (err) => {
+        if(err){
+            return res.json({err})
+        }
+        return res.json({success: true})
+    });
 });
 
 async.waterfall([
