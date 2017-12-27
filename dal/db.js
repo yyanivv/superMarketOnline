@@ -12,7 +12,7 @@ const handlers = require('./handlers.js');
 const queries = {
     
     userExist: (req, res, next) => {
-        const username = req.params.username;
+        const username = req.params.username.toLowerCase();
         User.findOne({username}, (err, data) => handlers.errorHandler(err, res, () => {
             data = data ? true : false 
             handlers.successHandler(req, data, next)

@@ -26,6 +26,7 @@ const passportHandlers = {
     generateHash: (username, password) => crypto.createHmac('sha256', password).update(username).digest('hex'),
     
     signup: (req, username, password, done) => {
+        username = username.toLowerCase();
         const {firstName, lastName, city, address} = req.body;
         const hash = passportHandlers.generateHash(username, password);
         const user = new User({firstName, lastName, username, password: hash, city, address})
@@ -38,6 +39,7 @@ const passportHandlers = {
     },
     
     login: (username, password, done) => {
+        username = username.toLowerCase();
         const hash = passportHandlers.generateHash(username, password);
         User.findOne({username}, (err, user) => {
           if (err) {
