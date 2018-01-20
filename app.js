@@ -103,27 +103,27 @@ app.get('/auth/google',
 
 app.get('/auth/google/callback',
     passport.authenticate('google',{
-        failureRedirect: '/login?login=false'
-        }), (req, res) => res.redirect('/login?login=true'));
+        failureRedirect: '/login?login=fail'
+        }), (req, res) => res.redirect('/login'));
 
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
-      successRedirect: '/login?login=true',
-      failureRedirect: '/login?login=false'
+      successRedirect: '/login?login',
+      failureRedirect: '/login?login=fail'
 }));
 
 app.post('/login',
     passport.authenticate('local', {
-      successRedirect: '/login?login=true',
-      failureRedirect: '/login?login=false',
+      successRedirect: '/login',
+      failureRedirect: '/login?login=fail',
       failureFlash : true
     })
 );
 
 app.post('/signup', 
     passport.authenticate('local-sign', {
-      successRedirect: '/login?signup=true',
-      failureRedirect: '/login?signup=false'
+      successRedirect: '/login',
+      failureRedirect: '/login?login=fail'
     })
 );
 
