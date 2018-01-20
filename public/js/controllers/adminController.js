@@ -1,9 +1,5 @@
 app.controller('adminController', ($scope, $http, superServices) => {
 
-    $scope.search = val => val.length > 1 ? superServices.getProductByName(val).then(({data}) =>
-    $scope.products = data.data) : $('product-wrap').remove();
-
-
     const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
 
     $scope.adminConnected = data => {
@@ -11,19 +7,13 @@ app.controller('adminController', ($scope, $http, superServices) => {
         $scope.fullName = data.user.profile ? data.user.profile.displayName : capitalizeFirstLetter(data.user.firstName) + ' ' + capitalizeFirstLetter(data.user.lastName);
     }
 
-    superServices.fetchUser().then(({
-        data
-    }) => data.user.role === 'admin' ? $scope.adminConnected(data) : window.location.href = '/login').catch(({
-        err
-    }) => err.status = 401 ? window.location.href = '/login' : console.log(err));
+    superServices.fetchUser().then(({data}) => data.user.role === 'admin' ? $scope.adminConnected(data) : window.location.href = '/login').catch(({err}) => err.status = 401 ? window.location.href = '/login' : console.log(err));
 
     $scope.getAllCategories = newCategory => {
-        superServices.getAllCategories().then(({
-            data
-        }) => {
+        superServices.getAllCategories().then(({data}) => {
             $scope.categories = data.data
             if (newCategory) {
-                $scope.allCategories = $scope.categories[$scope.categories.length - 1]._id;
+                $scope.cid = $scope.categories[$scope.categories.length - 1]._id;
             }
         })
     }
@@ -33,14 +23,11 @@ app.controller('adminController', ($scope, $http, superServices) => {
     	$('#buttons-wrapper li').removeClass('category-selected');
     }
     
-    $scope.fetchProductsByCategory = cid => superServices.getProductsByCategory(cid).then(({
-        data
-    }) => {
+    $scope.fetchProductsByCategory = cid => superServices.getProductsByCategory(cid).then(({data}) => {
         $scope.products = data.data
-        $scope.cid = cid;
-        $('#buttons-wrapper li').removeClass('category-selected');
-        $('#' + cid).addClass('category-selected');
-        $scope.resetForm();
+        if($scope.checkoutMode) $scope.checkoutMode = !$scope.checkoutMode;
+        $('#buttons-wrapper li i').removeClass('fa-circle').addClass('fa-circle-o');
+        $('#' + cid +' i').removeClass('fa-circle-o').addClass('fa-circle');
     })
 
     $scope.resetForm = () => {
@@ -53,14 +40,15 @@ app.controller('adminController', ($scope, $http, superServices) => {
 
     $scope.addCategory = () => $scope.newCategory.length > 3 && !categoryExist($scope.newCategory.toLowerCase()) ? superServices.createCategory({
         name: $scope.newCategory.toLowerCase()
-    }).then(({
-        data
-    }) => data.success ? $scope.getAllCategories($scope.newCategory.toLowerCase()) : $scope.err = 'cant add category') : $scope.categoryExistErr = "Invalid name"
+    }).then(({data}) => data.success ? $scope.getAllCategories($scope.newCategory.toLowerCase()) : $scope.err = 'cant add category').catch(({status}) => status === 401 ? window.location.href="/login" : console.log(status)); : $scope.categoryExistErr = "Invalid name"
 
     const addProductDetails = (service, obj) => {
-        service(obj).then(({
-            data
-        }) => data.success ? $scope.fetchProductsByCategory($('.category-selected').attr('id')) : $scope.addError = 'cannot add product')
+        service(obj).then(({data})=>{
+                          if(data.success){
+            $scope.fetchProductsByCategory($scope.cid) 
+            $scope.resetForm();
+                          } 
+        })
     }
 
     $scope.addProduct = () => {
@@ -80,7 +68,7 @@ app.controller('adminController', ($scope, $http, superServices) => {
                 return addProductDetails(superServices.createProduct, productDetails)
             }
             $scope.err = 'cant add product';
-        })
+        }).catch(({status}) => status === 401 ? window.location.href="/login" : console.log(status))
     }
 
     const findProduct = id => $scope.products.filter(({
@@ -161,7 +149,12 @@ app.controller('adminController', ($scope, $http, superServices) => {
     $scope.deleteProduct = (pid, cid) => {
         pid = $scope.pid
         cid = $scope.cid
-        superServices.deleteProduct(pid, cid).then(res => res.status === 204 ? $scope.fetchProductsByCategory(cid) : $scope.deleteError = 'cannot delete product')
+        superServices.deleteProduct(pid, cid).then(res => {
+            if(res.status != 204){
+                $scope.deleteError = 'cannot delete product')
+            }
+            $scope.resetForm();
+            $scope.fetchProductsByCategory(cid)
     }
 
 });

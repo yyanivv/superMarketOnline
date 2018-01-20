@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" id="card" name='card' placeholder="Type your credit card" ng-model="card" ng-pattern="pattern" required ng-class="{'has-error': form.card.$dirty && form.card.$invalid}">
+                    <input class="form-control" type="text" id="card" name='card' placeholder="Type your credit card" ng-model="card" ng-pattern="patternCreditCard" required ng-class="{'has-error': form.card.$dirty && form.card.$invalid}">
                     <div class="errContainer">
                         <span class="errBubble" ng-if="form.card.$dirty && form.card.$invalid">Please type a valid credit cart number</span>
                     </div>
@@ -93,10 +93,13 @@
         
         <div class="cart-container">
            <h3 id="cart-heading">
-              <button type="button" ng-click="clearCart()"> <i class="fa fa-eraser" aria-hidden="true"></i> </button>
+              <button type="button" ng-click="clearCart()"> <i class="fa fa-trash-o" aria-hidden="true"></i> </button>
               CART
               <p>{{cart.price}}<i class="fa fa-ils"></i></p>
            </h3>
+           <div class="search-in-cart" ng-show="checkoutMode">
+               <input type="text" class="form-control" ng-model="pname" placeholder="Search in your cart" ng-change="searchInCart()">
+           </div>
            <div class="cart-body">
                <cart-product ng-repeat="product in productsCart" data="product" add-product="addProduct" delete-product-from-cart="deleteFromCart"></cart-product>
            </div>
@@ -105,7 +108,7 @@
              <i class="fa fa-shopping-cart" aria-hidden="true"></i></button>
             </div>
         </div>
-
+        
     </section>
 </body>
 

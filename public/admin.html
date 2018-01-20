@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/admin.css">
+    <link href="https://fonts.googleapis.com/css?family=Leckerli+One|Telex" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
@@ -27,20 +28,16 @@
 
 <body ng-controller="adminController" ng-cloak>
     <header>
-        <nav class="">
-            <div class="brand">
-                <a href="login">
-                    <img src="images/logo_green.png" alt="New Market" id="logo">
-                </a>
-            </div>
-            <div class="search-bar">
-                <input-search render="products"></input-search>
-            </div>
-            <form action="/logout" method="get" id="logoutForm" ng-show="admin">
-                <p id="fullname"> <i class="fa fa-user"></i> {{fullName}}</p>
-                <button type="submit" id="logoutBtn">Log Out</button>
-            </form>
-        </nav>
+        <div class="header-logo">
+            <img src="images/logo.png" alt="New Market" id="logo">
+        </div>
+        <div class="search-bar">
+            <input-search render="products"></input-search>
+        </div>
+        <form action="/logout" method="get" id="logoutForm" ng-show="isAdmin">
+            <p id="fullname"> <i class="fa fa-user"></i> {{fullName}}</p>
+            <button type="submit" id="logoutBtn" ng-click="userConnected = !userConnected">Log Out</button>
+        </form>
     </header>
     <section ng-show="admin">
         <aside class="categories-wrapper">
@@ -49,72 +46,44 @@
                 <category-btn ng-repeat="category in categories" category="category" clicky="fetchProductsByCategory"></category-btn>
             </ul>
         </aside>
-        <div class="products-container">
-            <product-wrap ng-repeat="product in products" product-data="product" label="'edit'" labell="'add'" edit-product="editProduct" add-product="addProduct2" admin="isAdmin" select-quantity="selectQuantity"></product-wrap>
+        <div class="products-container" ng-hide="checkoutMode">
+            <product-wrap ng-repeat="product in products" product-data="product" label="'edit'" labell="'add'" edit-product="editProduct" add-product="addProduct" admin="isAdmin" select-quantity="selectQuantity"></product-wrap>
         </div>
-        <div class="form-container add-product">
+        
+        <div class="add-product">
+            <h3 id="add-heading">ADD PRODUCT</h3>
             <form ng-init="getAllCategories()">
-                <h3 id="add-heading">ADD PRODUCT</h3>
                 <div class="form-group name">
                     <input type="text" class="form-control" placeholder="Product Name" name="name" ng-model="pname" id="pname" required>
                 </div>
                 <div class="form-group price">
                     <input type="text" class="form-control" placeholder="Product Price" name="price" ng-model="pprice" required>
                 </div>
-                <div class="form-group image">
-                    <div class="img-selected"><img src="" alt="" width="100"></div>
-                    <input type="file" class="form-control" id="myFile" name="image" ng-model="pimage" required>
-                </div>
                 <div class="form-group category" ng-hide="updateMode">
-                    <select class="form-control" ng-model="allCategories" required>
+                    <select class="form-control" ng-model="cid" required>
                     <option value="" disabled selected>Select Category</option>
-                    <option ng-repeat="category in categories" value="{{category._id}}">{{category.name}}</option>
+                    <option ng-repeat="category in categories" value="{{category._id}}" ng>{{category.name}}</option>
                     <option value="newCategory">Add new category</option>           
                 </select>
                 </div>
-                <div class="form-group newCategory" ng-show="allCategories === 'newCategory'">
-                    <input type="text" class="form-control" name="newCategory" ng-model="newCategory">
+                <div class="form-group newCategory" ng-show="cid === 'newCategory'">
+                    <input type="text" class="form-control" name="newCategory" ng-model="newCategory" placeholder="New Category">
                     <p ng-show="categoryExistErr">{{categoryExistErr}}</p>
-                    <button type="button" class="btn btn-success" ng-click="addCategory()">Add Category</button>
+                    <button type="button" class="" ng-click="addCategory()">Add</button>
                 </div>
-                <button type="submit" class="btn btn-success" ng-click="addProduct()" ng-hide="updateMode"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                <button type="button" class="btn btn-success" ng-click="updateProduct()" ng-show="updateMode"><i class="fa fa-check" aria-hidden="true"></i></button>
-                <button type="button" class="btn btn-warning" ng-click="resetForm()"><i class="fa fa-times" aria-hidden="true"></i>
-                </button>
-                <button type="button" class="btn btn-danger" ng-click="deleteProduct()" ng-show="updateMode"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                <div class="form-group image">
+                    <input type="file" class="form-control" id="myFile" name="image" ng-model="pimage" required>
+                    <div class="img-selected"><img alt="" src="" width="100"></div>
+                </div>
             </form>
-        </div>
-
-        <!--      <form action="">
-          <div class="form-group">
-            <label for="city">City</label>
-            <input type="text" id="city" class="form-control" placeholder="City" ng-model="city" ng-dblclick="fetchCity()">
-          </div>
-          <div class="form-group">
-            <label for="street">Street</label>
-            <input type="text" id="street" class="form-control" placeholder="Street" ng-model="street" ng-dblclick="fetchStreet()">
-          </div>
-          <div class="form-group">
-            <label for="date">Pick up a delivery date</label>
-            <div class='input-group date' id='datetimepicker1'>
-              <input type='text' class="form-control" ng-model="date"/>
-                <span class="input-group-addon">
-                  <span class="glyphicon glyphicon-calendar"></span>
-                </span>
+            <div class="buttons-container">
+                <button type="submit" class="" ng-click="addProduct()" ng-hide="updateMode">Add Product</button>
+                <button type="button" class="" ng-click="updateProduct()" ng-show="updateMode">Update Product</button>
+                <button type="button" class="" ng-click="resetForm()">RESET</i>
+                </button>
+                <button type="button" class="" ng-click="deleteProduct()" ng-show="updateMode">Delete Product</button>
             </div>
-          </div>
-          <div class="form-group">
-            <label for="card">Card Number</label>
-            <input type="text" id="card" class="form-control" placeholder="Credit card" ng-model="card">
-          </div>
-          <button class="btn btn-primary" ng-click="makeOrder(city, street, card)">Checkout</button>
-      </form>
-      -->
-
-
-
-
-
+        </div>
     </section>
 </body>
 

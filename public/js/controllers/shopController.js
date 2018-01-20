@@ -2,7 +2,10 @@ app.controller('shopController', ($scope, $http, superServices) => {
     
     const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
     
-    const continueShopping = cart => {$scope.productsCart = cart.products; $scope.cart = cart};
+    const continueShopping = cart => {
+        $scope.cart = cart
+        $scope.productsCart = cart.products;
+    };
     
     const newCart = () => {
         $scope.cart = {
@@ -19,28 +22,25 @@ app.controller('shopController', ($scope, $http, superServices) => {
     
     $scope.isAdmin = () => false;
     
-    superServices.fetchUser().then(({data}) => $scope.authorizedUser(data));
+    superServices.fetchUser().then(({data}) => $scope.authorizedUser(data)).catch(({status}) => status === 401 ? window.location.href="/login" : console.log(status));
 
     $scope.authorizedUser = data => {
         $scope.fullName = data.user.profile ? data.user.profile.displayName : capitalizeFirstLetter(data.user.firstName) + ' ' + capitalizeFirstLetter(data.user.lastName);
         $scope.userConnected = true;
         data.openCart ? continueShopping(data.openCart) : newCart() ;
         $scope.currentUser = data.user
-        console.log($scope.currentUser)
     }
 
     superServices.getAllCategories().then(({data}) => $scope.categories = data.data);
     
-    $scope.fetchProductsByCategory = cid => superServices.getProductsByCategory(cid).then(({
-        data
-    }) => {
+    $scope.fetchProductsByCategory = cid => superServices.getProductsByCategory(cid).then(({data}) => {
         $scope.products = data.data
         if($scope.checkoutMode) $scope.checkoutMode = !$scope.checkoutMode;
         $('#buttons-wrapper li i').removeClass('fa-circle').addClass('fa-circle-o');
         $('#' + cid +' i').removeClass('fa-circle-o').addClass('fa-circle');
-    })
+    }).catch(({status}) => status === 401 ? window.location.href="/login" : console.log(status))
     
-    $scope.deleteFromCart = id => superServices.deleteProductFromCart(id).then(({data})=> data.data ? continueShopping(data.data) : $('cart-product').remove());
+    $scope.deleteFromCart = id => superServices.deleteProductFromCart(id).then(({data})=> data.data ? continueShopping(data.data) : newCart()).catch(({status}) => status === 401 ? window.location.href="/login" : console.log(status));
     
     $scope.addProduct = (pid,quantity) => {
         let currentProduct;
@@ -67,9 +67,9 @@ app.controller('shopController', ($scope, $http, superServices) => {
         $('#' + pid).val(eval)
     }
     
-    $scope.clearCart = () => superServices.clearCart().then(res=> res.status === 204 ? newCart() : console.log(res));
+    $scope.clearCart = () => superServices.clearCart().then(res=> res.status === 204 ? newCart() : console.log(res)).catch(({status}) => status === 401 ? window.location.href="/login" : console.log(status));
     
-    $scope.goToCash = () => $scope.checkoutMode = true;
+    $scope.goToCash = () => $scope.productsCart.length > 0 ? $scope.checkoutMode = true : $scope.checkoutMode = false;
     
     superServices.getDeliveryDates().then(({
         data
@@ -110,6 +110,14 @@ app.controller('shopController', ($scope, $http, superServices) => {
 			$('popup #download').attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
 			const element = document.getElementById('download');
 			element.click();
+		}).catch(({status}) => status === 401 ? window.location.href="/login" : console.log(status));
+	}
+    
+    $scope.searchInCart = name => $scope.pname.length > 0 ? markProducts($scope.pname.toLowerCase()) : $('.product-name').removeClass('marked');
+
+	const markProducts = name => {
+		$('.product-details p:first-child').each(function() {
+			$(this).text().toLowerCase().indexOf(name)!=-1 ? $(this).addClass('marked') : $(this).removeClass('marked');
 		})
 	}
 });

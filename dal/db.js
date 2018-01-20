@@ -23,7 +23,8 @@ const queries = {
     },
     
     createOrder: (req,res,next) => {
-        const order = new Order(req.body);
+        const {shipping_details, creditCard, shipping_date} = req.body;
+        const order = new Order({shipping_details, creditCard, shipping_date, cart: req.session.cart});
         order.save((err, data)=> handlers.errorHandler(err, res, () => queries.appendOrderToUser(req,res,data,next)))
     },
     
