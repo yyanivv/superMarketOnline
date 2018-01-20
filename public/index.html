@@ -1,28 +1,91 @@
-<!doctype html>
-<html ng-app="app">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>New Market Smart Shopping</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
-    <script type="text/javascript" src="js/services/services.js"></script>
-    <script type="text/javascript" src="js/controllers/ordersController.js"></script>
-    <script type="text/javascript" src="js/controllers/shoppingController.js"></script>
-</head>
-<body>
-    <nav class="navbar navbar-default">
-        <ul class="nav navbar-nav">
-            <li><a href="#!/shopping">shopping</a></li>
-            <li><a href="#!/orders">orders</a></li>
-        </ul>
-    </nav>
-    <div ng-view>
-    
-    </div>
-</body>
 
-</html>
+<section ng-show="userConnected" >
+        <aside class="categories-wrapper">
+            <h3 id="categories-heading">CATEGORIES</h3>
+            <ul id="buttons-wrapper">
+                <category-btn ng-repeat="category in categories" category="category" clicky="fetchProductsByCategory"></category-btn>
+            </ul>
+        </aside>
+        <div class="products-container" ng-hide="checkoutMode">
+            <product-wrap ng-repeat="product in products" product-data="product" label="'edit'" labell="'add'" edit-product="editProduct" add-product="addProduct" admin="isAdmin" select-quantity="selectQuantity"></product-wrap>
+        </div>
+
+<!--            <form action="" novalidate>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" class="form-control" placeholder="City" ng-model="city" ng-dblclick="fetchCity()">
+                </div>
+                <div class="form-group">
+                    <label for="address">address</label>
+                    <input type="text" id="address" class="form-control" placeholder="address" ng-model="address" ng-dblclick="fetchaddress()">
+                </div>
+                <div class="form-group">
+                    <label for="date">Pick up a delivery date</label>
+                    <div class='input-group date' id='datetimepicker1'>
+                        <input type='text' class="form-control" ng-model="date" />
+                        <span class="input-group-addon">
+                  <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="card">Card Number</label>
+                    <input type="text" id="card" class="form-control" placeholder="Credit card" ng-model="card" ng-pattern="patternCreditCard">
+                </div>
+                <button class="btn btn-primary" ng-click="makeOrder(city, address, card)">Checkout</button>
+            </form>-->
+<div class="order-container" ng-show="checkoutMode">
+<form class="order-form" ng-show="!shoppingStep" name="form" novalidate>
+              <h3>Shipping Details</h3>
+               <div class="form-group">
+                  <div class='input-group date' id='datetimepicker1'>
+                     <input type='text' class="form-control" name="date" ng-model="date" placeholder="Pick up a shipping date" required>
+                     <span class="input-group-addon">
+                     <span class="glyphicon glyphicon-calendar"></span>
+                     </span>
+                  </div>
+                  <div class="errContainer">
+                     <span class="errBubble" ng-if="dateErr">Can't be blank</span>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <input type="text" id="city" name="city" placeholder="Shipping city" ng-model="city" ng-dblclick="fetchCity()" required ng-class="{'has-error': form.city.$dirty && form.city.$invalid}">
+                  <div class="errContainer">
+                     <span class="errBubble" ng-if="form.city.$dirty && form.city.$invalid">Can't be blank</span>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <input type="text" id="address" name="address" placeholder="Shipping address" ng-model="address" ng-dblclick="fetchAddress()" required ng-class="{'has-error': form.address.$dirty && form.address.$invalid}">
+                  <div class="errContainer">
+                     <span class="errBubble" ng-if="form.address.$dirty && form.address.$invalid">Can't be blank</span>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <input type="text" id="card" name='card' placeholder="Type your credit card" ng-model="card" ng-pattern="pattern" required ng-class="{'has-error': form.card.$dirty && form.card.$invalid}">
+                  <div class="errContainer">
+                     <span class="errBubble" ng-if="form.card.$dirty && form.card.$invalid">Please type a valid credit cart number</span>
+                  </div>
+               </div>
+               <div>Subtotal: {{cart.totalPrice}} <i class="fa fa-usd"></i></div>
+               <div ng-if="cart.totalPrice < 100">Shipping: 7 <i class="fa fa-usd"></i></div>
+               <div ng-if="cart.totalPrice >= 100">Shipping: 0 <i class="fa fa-usd"></i></div>
+               <div ng-if="cart.totalPrice < 100"><span>Total: </span><span ng-bind="cart.totalPrice + 7"></span><i class="fa fa-usd"></i></div>
+               <div ng-if="cart.totalPrice >= 100"><span>Total: </span><span ng-bind="cart.totalPrice + 0"></span><i class="fa fa-usd"></i></div>
+               <button class="btn btnPush" ng-click="checkout(city, address, card)" ng-disabled="form.card.$invalid || form.address.$invalid || form.city.$invalid">CHECKOUT</button>
+               <p ng-if="orderErr">There was en error submit your order. Please try again later.</p>
+            </form>
+       
+        <popup download="download"></popup>
+       
+        </div>
+        <div class="cart-container">
+            <cart-product ng-repeat="product in productsCart" data="product" add-product="addProduct" delete-product-from-cart="deleteFromCart"></cart-product>
+            <div class="cart-buttons">
+                <button type="button" ng-click="goToCash()">CHECK OUT</button>
+            </div>
+        </div>
+
+
+
+
+    </section>

@@ -13,6 +13,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const passportConfig = require('./auth/passport-conf');
 const db = require('./dal/db.js');
+const handlers = require('./dal/handlers.js');
 const ejs = require('ejs');
 const engine  = require ('ejs-locals');
 const flash = require('connect-flash');
@@ -81,17 +82,19 @@ app.use(passport.session());
 
 app.use(express.static('public'));
 
+app.use('/super', passportConfig.validatedUser, appRouters);
+
+app.use('/oauth', passportConfig.validatedUser, authRouter);
+
 app.get('/login', (req, res) => {
     res.render('login',{
         error: req.flash('error')
     })
 });
 
-app.get('/userExist/:username', db.userExist, (req, res)=> res.status(200).json({userExist: req.data}));
+app.get('/userExist/:username', db.userExist, (req, res) => res.status(200).json({userExist: req.data}));
 
-app.use('/super', passportConfig.validatedUser, appRouters);
-
-app.use('/oauth', passportConfig.validatedUser, authRouter);
+app.get('/getSuperDetails', db.getProductsCount, db.getOrdersCount, handlers.getSuperDetailsResponse);
 
 app.get('/auth/facebook', passport.authenticate('facebook'));
 
@@ -129,17 +132,18 @@ app.get('/logout', (req, res) => {
   res.render('login',{
         error: req.flash('error')
     })
+  req.session.destroy();
 });
 
 app.post('/upload', (req, res) => {
     if (!req.files)
         return res.status(400).send('No files were uploaded.');
     const sampleFile = req.files.sampleFile;
-    fs.writeFile(path.join(__dirname, `/upload/`, sampleFile.name), sampleFile.data, (err) => {
+    fs.writeFile(path.join(__dirname, `/public/upload/`, sampleFile.name), sampleFile.data, (err) => {
         if(err){
             return res.json({err})
         }
-        return res.json({success: true})
+        return res.json({success: true, path:`../../upload/` + sampleFile.name})
     });
 });
 

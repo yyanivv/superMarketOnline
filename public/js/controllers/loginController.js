@@ -1,4 +1,6 @@
 app.controller('loginController', ($scope, $http, superServices) => {
+    
+    $scope.pattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/;
         
     const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
     
@@ -10,29 +12,30 @@ app.controller('loginController', ($scope, $http, superServices) => {
     const startShopping = data => {
         if(data.lastOrder){
 			$scope.lastOrder = data.lastOrder;
-			console.log($scope.lastOrder);
 		}
-		return 'start Shopping'
+		return 'Start Shopping'
     }
-
+    
     $scope.authorizedUser = data => {
 		$scope.fullName = data.user.profile ? data.user.profile.displayName : capitalizeFirstLetter(data.user.firstName) + ' ' + capitalizeFirstLetter(data.user.lastName);
-        $scope.userConnectedBtns = true;
+        $scope.userConnected = true;
         $scope.shoppingStatus = data.openCart ? continueShopping(data.openCart) : startShopping(data) ;
     }
       
-    superServices.fetchUser().then(({data}) => $scope.authorizedUser(data));
+    superServices.fetchUser().then(({data}) => data.user.role === 'admin'? window.location.href = '/admin.html' : $scope.authorizedUser(data));
     
-    $scope.checkUser = () => superServices.userExist($scope.user).then(({data}) => $scope.userExist = data.userExist ? true : false);      
+    superServices.getSuperDetails().then(({data}) => $scope.superDetails = data);
+    
+    $scope.checkUser = () => $scope.user != undefined ? superServices.userExist($scope.user).then(({data}) => $scope.userExist = data.userExist ? true : false) : $scope.userExist = false;
 
     $scope.toggleSteps = () => $scope.regStep = !$scope.regStep;
     
-    $scope.uploadFile = () => {
-        const file = document.getElementById('myfile');
-        const formData = new FormData();
-        formData.append('sampleFile', file.files[0]);
-        superServices.uploadFile(formData);
-    }
+//    $scope.uploadFile = () => {
+//        const file = document.getElementById('myfile');
+//        const formData = new FormData();
+//        formData.append('sampleFile', file.files[0]);
+//        superServices.uploadFile(formData);
+//    }
     
     /* 
     $scope.p1 = {

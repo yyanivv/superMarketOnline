@@ -10,6 +10,9 @@ const Order = mongoose.model('Order', orderModel);
 const handlers = require('./handlers.js');
 
 const queries = {
+    delNull: (req, res, next) => {
+        Category.remove({_id: null}, (err, data) =>console.log(data))
+    },
     
     userExist: (req, res, next) => {
         const username = req.params.username.toLowerCase();
@@ -25,7 +28,7 @@ const queries = {
     },
     
     appendOrderToUser: (req,res, data, next) => {
-        const uid = req.session.passport.user._id
+        const uid = req.session.passport.user.user ? req.session.passport.user.user._id : req.session.passport.user._id;
         User.update({_id:uid}, {$push: {"orders": data}}, {safe: true, upsert: true}, (err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
     },
 
@@ -45,8 +48,21 @@ const queries = {
     },
     
     editProduct:  (req, res, next) => {
-        const {_id,name,price,image} = req.body;
-        Product.update({_id}, {name, price, image}, (err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
+        const productDetails = {_id,name,price} = req.body;
+        if(req.body.image){
+            productDetails.image = req.body.image;
+        }
+        Product.update({_id : productDetails._id}, { $set: productDetails } , (err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
+    },
+    
+    deleteProduct:  (req, res, next) => {
+        const pid = req.params.pid;
+        Product.remove({_id:pid}, (err, data) => handlers.errorHandler(err, res, () => queries.removeProductFromCategory(req, res, next)))
+    },
+    
+    removeProductFromCategory: (req, res, next) => {
+        const {pid,cid} = req.params;
+        Category.update({_id:cid}, { $pull: { products: pid }}, (err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)))
     },
     
     getAllProducts: (req, res, next) => {
@@ -74,8 +90,22 @@ const queries = {
     getOrdersByUser: (req, res, next) => {
         const uid = req.params.uid
         User.find({_id: uid}).populate('orders').exec((err, data)=> handlers.errorHandler(err, res, () => handlers.successHandler(req, data[0].orders, next)));
-    }
+    },
     
+    getProductsCount: (req, res, next) => {
+        Product.find({}).count().exec((err, data) => handlers.errorHandler(err, res, () => {
+            req.totalProducts = data
+            return next();
+        }));
+        
+    },
+    
+    getOrdersCount: (req, res, next) => {
+        Order.find({}).count().exec((err, data)=> handlers.errorHandler(err, res, () => {
+            req.totalOrders = data
+            return next();
+        }));
+    }
 }
 
 module.exports = queries;

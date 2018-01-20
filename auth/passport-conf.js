@@ -5,21 +5,22 @@ const crypto = require('crypto');
 
 
 const passportHandlers = {
-
+ 
     socialUserExist: (accessToken, refreshToken, profile, done) => {
         User.findOne({"profile.id": profile.id}, (err, user) => {
             if (err) {
                 return done(false, err)
             }
             if (user) {
-                return done(false, {profile})
+                user.profile = profile
+                return done(false, user)
             }
             passportHandlers.saveSocialUser(accessToken, refreshToken, profile, done);
         })
     },
     
     saveSocialUser: (accessToken, refreshToken, profile, done) => {
-        const user = new User({accessToken, refreshToken, profile: profile._json});
+        const user = new User({accessToken, refreshToken, profile});
         user.save(err => done(false, {profile}))
     },
  
@@ -51,15 +52,14 @@ const passportHandlers = {
           if (user.password !== hash) {
             return done(null, false, {message: 'Incorrect password'});
           }
-          return done(null, user);
+           return done(null, user);
         });
     },
     serializeUser: (user, done) => done(null, user),
     deserializeUser: (user, done) => done(null, user),
     validatedUser: (req, res, next) => {
     if (req.isAuthenticated()) {
-        console.log
-      return next();
+        return next();
     }
     return res.sendStatus(401);
     }

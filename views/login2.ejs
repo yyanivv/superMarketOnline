@@ -1,42 +1,4 @@
-<!doctype html>
-<html ng-app="app">
-
-<head>
-    <meta charset="UTF-8">
-    <title>New Market - My Super Market</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Nixie+One" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <link rel="stylesheet" href="css/login.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
-    <script type="text/javascript" src="js/services/services.js"></script>
-    <script type="text/javascript" src="js/controllers/loginController.js"></script>
-    <script type="text/javascript" src="js/directives/validateEquals.js"></script>
-</head>
-
-<body ng-controller="loginController" ng-cloak>
-<header>
-   <div class="header-logo">
-       <img src="images/logo.png" alt="New Market" id="logo">
-   </div>
-    <form action="/logout" method="get" id="logoutForm" ng-show="userConnected">
-        <p id="fullname"> <i class="fa fa-user"></i> {{fullName}}</p> 
-        <button type="submit" id="logoutBtn" ng-click="userConnected = !userConnected">Log Out</button>
-    </form>
-</header>
-
-<section>
-<div class="tabs-container" ng-hide="!userConnected">
-    <div class="tab"><p>Available Products: {{superDetails.totalProducts}}</p></div>  
-    <div class="tab"><p>Total Orders: {{superDetails.totalOrders}}</p></div>  
-    <a href="shop.html"><div class="tab">{{shoppingStatus}}</div></a>
-</div>
-<div class="form-cube" ng-hide="userConnected">
+<div class="form-cube">
         <ul class="nav nav-pills">
             <li class="active topButton">
                 <a data-toggle="tab" href="#login">SIGN IN</a>
@@ -136,16 +98,3 @@
                 </div>
             </div>
     </div>
-    
-</section>
-
-<footer class="container-fluid navbar-fixed-bottom">
-    <div class="row">
-        <div class="col-lg-4"></div>
-        <div class="col-lg-4 links-wrapper"><a href="">HELP</a><span>|</span><a href="">ABOUT US</a><span>|</span><a href="">TERMS OF USE</a></div>
-        <div class="col-lg-4"></div>
-    </div>
-</footer>
-</body>
-
-</html>

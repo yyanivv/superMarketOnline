@@ -9,10 +9,12 @@ const ajaxCalls = ($http) => {
     const createProduct = product => $http.put('/super/createProduct', product);
 
     const editProduct = product => $http.patch('/super/editProduct', product);
+    
+    const deleteProduct = (pid, cid) => $http.delete('/super/deleteProduct/' + pid + '/' + cid);
 
     const getAllProducts = () => $http.get('/super/getAllProducts');
 
-    const getProduct = pname => $http.get('/super/getAllProducts/' + pname);
+    const getProductByName = pname => $http.get('/super/getProductByName/' + pname);
 
     const createOrder = order => $http.put('/super/createOrder', order);
 
@@ -24,15 +26,17 @@ const ajaxCalls = ($http) => {
 
     const createCategory = category => $http.put('/super/createCategory', category);
 
-    const getProductsByCategory = cid => $http.get('/super/getProductsByCategory/' + cid);
+    const getProductsByCategory = cid => $http.get('/super/getProductsByCategory/' + cid)
 
     const deleteProductFromCart = pid => $http.delete('/super/deleteProductFromCart/' + pid);
 
-    const clearCart = cid => $http.delete('/super/clearCart/' + cid);
+    const clearCart = () => $http.delete('/super/clearCart/');
 
     const getDeliveryDates = () => $http.get('/super/getDeliveryDates');
     
     const uploadFile = formData => $http({url:'/upload',method: 'POST',data: formData, headers: {'Content-Type': undefined}});
+    
+    const getSuperDetails = () => $http.get('/getSuperDetails');
 
     return { 
         /*getCities,*/
@@ -40,8 +44,9 @@ const ajaxCalls = ($http) => {
         userExist,
         createProduct,
         editProduct,
+        deleteProduct,
         getAllProducts,
-        getProduct,
+        getProductByName,
         createOrder,
         updateCart,
         getOrdersByUser,
@@ -51,7 +56,8 @@ const ajaxCalls = ($http) => {
         deleteProductFromCart,
         clearCart,
         getDeliveryDates,
-        uploadFile
+        uploadFile,
+        getSuperDetails
     }
 }
 

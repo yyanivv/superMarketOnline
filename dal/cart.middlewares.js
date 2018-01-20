@@ -1,48 +1,52 @@
 const mongoose = require('mongoose');
-const orderModel = require('../model/order.model.js');
-const Order = mongoose.model('Order', orderModel);
+const userModel = require('../model/user.model.js');
+const User = mongoose.model('User', userModel);
 const handlers = require('./handlers.js');
 
 const getLastCart = (req, res, next) => {
     if(req.session.cart){
-        return next();
+      return next();
     }
-    const orders = req.session.passport.user.orders;
-    if(orders) {
-        const lastOrderId = orders[orders.length-1];
-        return Order.findOne({_id: lastOrderId}).exec((err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data, next)));
-    }
-    return next()
+    const _id = req.session.passport.user.user ? req.session.passport.user.user._id : req.session.passport.user._id;
+    User.findOne({_id}).populate('orders').exec((err, data) => handlers.errorHandler(err, res, () => handlers.successHandler(req, data.orders[data.orders.length-1], next)));
 }
+
 
 const updateCart = (req, res, next) => {
     const product = req.body;
     if(!req.session.cart){
         return createCart(req, next);
     }
-    const productsAraay = req.session.cart.products;
-    req.body.total = req.body.quantity * req.body.products.price;
-    for(let i=0; i<productsAraay.length; i++){
-        if(product.products._id === productsAraay[i].products._id){
-            productsAraay[i].quantity === 0 ? productsAraay.splice(i,1) : productsAraay[i].quantity += product.quantity
-            productsAraay[i].total += product.total
+    const productsArray = req.session.cart.products;
+    product.total = Number(product.quantity) * Number(product.products.price);
+    for(let i=0; i<productsArray.length; i++){
+        if(product.products._id === productsArray[i].products._id){
+            if(productsArray[i].quantity === 1 &&  product.quantity === -1){
+                productsArray.splice(i,1)
+                return next();
+            }
+            productsArray[i].quantity += Number(product.quantity)
+            productsArray[i].total += Number(product.total)
             return next();
         }   
     }
-    productsAraay.push(product);
+    productsArray.push(product);
     return next();
 }
 
 const createCart = (req, next) => {
-        req.body.total = req.body.quantity * req.body.products.price
-        req.session.cart = {
-            products: [req.body],
-            createdOn: new Date()
-        }
-        return next();
+    req.body.total = Number(req.body.quantity) * Number(req.body.products.price)
+    req.session.cart = {
+        products: [req.body],
+        createdOn: new Date().toLocaleDateString()
+    }
+    return next();
 }
 
 const totalPrice = (req,res,next) =>{
+    if(!req.session.cart){
+        return next();
+    }
     const products = req.session.cart.products;
     let price = 0;
     products.forEach(product => price += product.total)
