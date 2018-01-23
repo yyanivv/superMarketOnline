@@ -1,0 +1,39 @@
+{
+  "name": "application",
+  "version": "1.0.0",
+  "description": "* A user who signs up for a new online market can fill a shopping cart and make a direct order to his home.",
+  "main": "app.js",
+  "dependencies": {
+    "async": "^2.6.0",
+    "body-parser": "^1.18.2",
+    "connect-mongo": "^2.0.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "crypto": "^1.0.1",
+    "ejs": "^2.5.7",
+    "ejs-locals": "^1.0.2",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "express-fileupload": "^0.3.0",
+    "mongoose": "^4.13.5",
+    "passport-facebook": "^2.1.1",
+    "passport": "^0.4.0",
+    "passport-google-oauth": "^1.0.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yyanivv/superMarketOnline.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yyanivv/superMarketOnline/issues"
+  },
+  "homepage": "https://github.com/yyanivv/superMarketOnline#readme"
+}
