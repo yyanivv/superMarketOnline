@@ -4,7 +4,7 @@
   "description": "* A user who signs up for a new online market can fill a shopping cart and make a direct order to his home.",
   "main": "app.js",
   "dependencies": {
-    "async": "^2.6.0",
+    "async": "^3.2.2",
     "body-parser": "^1.18.2",
     "connect-mongo": "^2.0.0",
     "connect-flash": "^0.1.1",
